@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Users, Zap, Clock } from "lucide-react";
@@ -178,9 +178,9 @@ export function ParallaxHero() {
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.8, duration: 0.8 }}
-                className="text-2xl lg:text-4xl font-medium text-blue-200 mouse-parallax"
-              >
-                "Spotify для фанфиков"
+                                  className="text-2xl lg:text-4xl font-medium text-blue-200 mouse-parallax"
+                >
+                  &ldquo;Spotify для фанфиков&rdquo;
               </motion.p>
             </div>
 

@@ -23,23 +23,21 @@ export function ParallaxContainer({
     offset: ["start end", "end start"]
   });
 
-  const getTransform = () => {
-    const distance = 100 * speed;
-    switch (direction) {
-      case "up":
-        return useTransform(scrollYProgress, [0, 1], [distance, -distance]);
-      case "down":
-        return useTransform(scrollYProgress, [0, 1], [-distance, distance]);
-      case "left":
-        return useTransform(scrollYProgress, [0, 1], [distance, -distance]);
-      case "right":
-        return useTransform(scrollYProgress, [0, 1], [-distance, distance]);
-      default:
-        return useTransform(scrollYProgress, [0, 1], [distance, -distance]);
-    }
-  };
-
-  const transform = getTransform();
+  const distance = 100 * speed;
+  
+  // All useTransform calls must be at the top level
+  const upTransform = useTransform(scrollYProgress, [0, 1], [distance, -distance]);
+  const downTransform = useTransform(scrollYProgress, [0, 1], [-distance, distance]);
+  const leftTransform = useTransform(scrollYProgress, [0, 1], [distance, -distance]);
+  const rightTransform = useTransform(scrollYProgress, [0, 1], [-distance, distance]);
+  
+  const transform = direction === "down" 
+    ? downTransform
+    : direction === "left"
+    ? leftTransform  
+    : direction === "right"
+    ? rightTransform
+    : upTransform; // default "up"
   const springTransform = useSpring(transform, { stiffness: 100, damping: 30 });
 
   return (
@@ -77,16 +75,16 @@ export function ParallaxElement({
   });
 
   const y = useTransform(scrollYProgress, [0, 1], [50 * speed, -50 * speed]);
-  const rotateX = rotate ? useTransform(scrollYProgress, [0, 1], [0, 360]) : 0;
-  const scaleValue = scale ? useTransform(scrollYProgress, [0, 1], [0.8, 1.2]) : 1;
+  const rotateX = useTransform(scrollYProgress, [0, 1], rotate ? [0, 360] : [0, 0]);
+  const scaleValue = useTransform(scrollYProgress, [0, 1], scale ? [0.8, 1.2] : [1, 1]);
 
   return (
     <div ref={ref} className={className}>
       <motion.div
         style={{
           y: useSpring(y, { stiffness: 100, damping: 30 }),
-          rotateX: rotate ? useSpring(rotateX, { stiffness: 100, damping: 30 }) : 0,
-          scale: scale ? useSpring(scaleValue, { stiffness: 100, damping: 30 }) : 1,
+          rotateX: useSpring(rotateX, { stiffness: 100, damping: 30 }),
+          scale: useSpring(scaleValue, { stiffness: 100, damping: 30 }),
         }}
       >
         {children}

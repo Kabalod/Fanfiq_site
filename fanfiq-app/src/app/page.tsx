@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, BookOpen, Search, Users, Star, Menu, X, Zap, Shield, Target, TrendingUp, Clock } from "lucide-react";
+import { CheckCircle, BookOpen, Search, Users, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ParallaxHero } from "@/components/sections/ParallaxHero";
@@ -294,7 +294,7 @@ function FinalCTASection() {
             </Button>
           </div>
         </motion.div>
-      </div>
+    </div>
     </section>
   );
 }
