@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs-20_x", "npm-10_x"]
+
+[phases.install]
+cmds = ["cd fanfiq-app && npm ci --prefer-offline --no-audit"]
+
+[phases.build]
+cmds = ["cd fanfiq-app && npm run build"]
+
+[start]
+cmd = "cd fanfiq-app && npm start"
