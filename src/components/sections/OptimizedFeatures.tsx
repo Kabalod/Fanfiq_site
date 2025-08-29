@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, BookOpen, Users, Shield, Zap, Target } from "lucide-react";
-import { Section, FluidText, ResponsiveGrid } from "@/components/layout/OptimizedLayout";
+import React from "react";
 
 const features = [
   {
@@ -61,31 +61,29 @@ export function OptimizedFeatures() {
   };
 
   return (
-    <Section id="features" background="muted" padding="xl">
-      {/* Background decorations */}
-      <div className="absolute top-20 left-10 w-64 h-64 bg-blue-400/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/5 rounded-full blur-3xl" />
+    <section id="features" className="section-padding bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 relative overflow-hidden">
+      {/* Enhanced background decorations */}
+      <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-indigo-400/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-br from-purple-400/10 to-pink-400/5 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-indigo-400/3 to-purple-400/3 rounded-full blur-3xl" />
 
       <div className="relative z-10">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <FluidText variant="heading">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-fluid-4xl font-bold text-foreground mb-6 text-gradient">
               Всё необходимое для комфортного чтения
             </h2>
-          </FluidText>
-          <FluidText variant="body" className="mx-auto">
-            <p className="text-xl text-muted-foreground">
+            <p className="text-fluid-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Мощные инструменты для поиска, чтения и взаимодействия с фанфик-сообществом
             </p>
-          </FluidText>
-        </motion.div>
+          </motion.div>
 
         {/* Features Grid */}
         <motion.div
@@ -94,41 +92,36 @@ export function OptimizedFeatures() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <ResponsiveGrid 
-            cols={{ default: 1, md: 2, lg: 3 }}
-            gap={6}
-            className="lg:gap-8"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             {features.map((feature, index) => (
               <motion.div key={index} variants={itemVariants}>
-                <Card className="border-border hover:shadow-2xl transition-all duration-500 hover:scale-105 h-full bg-white/80 backdrop-blur-sm">
-                  <CardHeader className="pb-4">
+                <Card className="card-enhanced hover:scale-105 h-full group">
+                  <CardHeader className="pb-6">
                     <motion.div
-                      className="mb-4"
-                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      className="mb-6 w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                      whileHover={{ scale: 1.2, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      {feature.icon}
+                      {React.cloneElement(feature.icon, { 
+                        className: "w-8 h-8 text-primary" 
+                      })}
                     </motion.div>
-                    <FluidText variant="heading">
-                      <CardTitle className="text-xl text-card-foreground">
-                        {feature.title}
-                      </CardTitle>
-                    </FluidText>
+                    <CardTitle className="text-fluid-xl text-card-foreground mb-3 group-hover:text-primary transition-colors">
+                      {feature.title}
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <FluidText variant="body">
-                      <p className="text-muted-foreground">
-                        {feature.description}
-                      </p>
-                    </FluidText>
+                  <CardContent className="pt-0">
+                    <p className="text-fluid-base text-muted-foreground leading-relaxed">
+                      {feature.description}
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
             ))}
-          </ResponsiveGrid>
+          </div>
+        </div>
         </motion.div>
       </div>
-    </Section>
+    </section>
   );
 }

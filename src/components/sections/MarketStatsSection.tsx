@@ -56,19 +56,23 @@ export function MarketStatsSection() {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="section-padding bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 relative overflow-hidden">
+      {/* Enhanced background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/3 to-indigo-500/5" />
+      <div className="absolute top-40 left-20 w-96 h-96 bg-gradient-to-br from-blue-400/8 to-indigo-400/4 rounded-full blur-3xl" />
+      
+      <div className="container relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-fluid-4xl font-bold text-foreground mb-6">
             Впечатляющие результаты
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-fluid-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Цифры, которые говорят о нашем успехе и потенциале роста
           </p>
         </motion.div>
@@ -78,53 +82,61 @@ export function MarketStatsSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
         >
           {statsData.map((stat, index) => (
             <motion.div key={index} variants={itemVariants}>
-              <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              <Card className="card-enhanced hover:scale-105 group h-full">
                 <CardContent className="p-8 text-center relative">
-                  {/* Icon */}
+                  {/* Enhanced Icon */}
                   <motion.div
-                    className={`mb-6 mx-auto w-16 h-16 rounded-full flex items-center justify-center ${stat.bgColor} ${stat.color}`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                    className={`mb-8 mx-auto w-20 h-20 rounded-3xl flex items-center justify-center ${stat.bgColor} ${stat.color} group-hover:shadow-lg transition-all duration-300`}
+                    whileHover={{ scale: 1.15, rotate: 10 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
                   >
-                    {stat.icon}
+                    {React.cloneElement(stat.icon, { 
+                      className: "w-10 h-10" 
+                    })}
                   </motion.div>
 
-                  {/* Value */}
-                  <div className={`text-4xl font-bold mb-2 ${stat.color}`}>
+                  {/* Enhanced Value */}
+                  <div className={`text-fluid-4xl font-black mb-4 ${stat.color} group-hover:scale-105 transition-transform duration-300`}>
                     {stat.value}
                   </div>
 
-                  {/* Label */}
-                  <p className="text-gray-600 font-medium text-center">
+                  {/* Enhanced Label */}
+                  <p className="text-fluid-base text-muted-foreground font-semibold leading-tight">
                     {stat.label}
                   </p>
 
-                  {/* Decorative elements */}
-                  <div className={`absolute top-4 right-4 w-2 h-2 rounded-full opacity-20 ${stat.bgColor.replace('bg-', 'bg-')}`} />
-                  <div className={`absolute bottom-4 left-4 w-1 h-1 rounded-full opacity-30 ${stat.bgColor.replace('bg-', 'bg-')}`} />
+                  {/* Enhanced decorative elements */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Additional info */}
+        {/* Enhanced additional info */}
         <motion.div
           initial={{ opacity: 0, scale: 0 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 1, duration: 0.8 }}
-          className="mt-16 text-center"
+          className="mt-20 text-center"
         >
-          <div className="inline-flex items-center space-x-2 bg-white rounded-full px-6 py-3 shadow-lg">
-            <TrendingUp className="w-5 h-5 text-green-500" />
-            <span className="text-gray-700 font-medium">
-              Рост аудитории +127% за год
-            </span>
+          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl px-8 py-4 shadow-lg border border-green-200/50 dark:border-green-700/30">
+            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <div className="text-fluid-lg font-bold text-green-700 dark:text-green-300">
+                +127% за год
+              </div>
+              <div className="text-fluid-sm text-green-600 dark:text-green-400 font-medium">
+                Рост аудитории
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
