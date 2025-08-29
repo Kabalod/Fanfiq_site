@@ -3,15 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, BookOpen, Search, Users, Star, Menu, X, Zap, Shield, Target, TrendingUp, Clock, Globe, DollarSign } from "lucide-react";
+import { CheckCircle, BookOpen, Search, Users, Menu, X, Zap, Shield, Target } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ParallaxHero } from "@/components/sections/ParallaxHero";
-import { AnimatedStats } from "@/components/sections/AnimatedStats";
-import { InteractiveCharts } from "@/components/sections/InteractiveCharts";
-import { EnhancedRoadmap } from "@/components/sections/EnhancedRoadmap";
 import { OptimizedFeatures } from "@/components/sections/OptimizedFeatures";
+import { MarketStatsSection } from "@/components/sections/MarketStatsSection";
+import { SimpleRoadmapSection } from "@/components/sections/SimpleRoadmapSection";
 
 export default function LandingPage() {
   return (
@@ -25,14 +24,11 @@ export default function LandingPage() {
       {/* Optimized Features Section */}
       <OptimizedFeatures />
 
-      {/* Animated Stats */}
-      <AnimatedStats />
+      {/* Market Stats Section */}
+      <MarketStatsSection />
 
-      {/* Interactive Charts */}
-      <InteractiveCharts />
-
-      {/* Enhanced Roadmap */}
-      <EnhancedRoadmap />
+      {/* Roadmap Section */}
+      <SimpleRoadmapSection />
 
       {/* Pricing Section */}
       <PricingSection />
@@ -75,9 +71,6 @@ function Header() {
             </a>
             <a href="#stats" className="text-muted-foreground hover:text-foreground transition-colors">
               Статистика
-            </a>
-            <a href="#charts" className="text-muted-foreground hover:text-foreground transition-colors">
-              Аналитика
             </a>
             <a href="#roadmap" className="text-muted-foreground hover:text-foreground transition-colors">
               Дорожная карта
@@ -126,9 +119,6 @@ function Header() {
               <a href="#stats" className="text-muted-foreground hover:text-foreground transition-colors">
                 Статистика
               </a>
-              <a href="#charts" className="text-muted-foreground hover:text-foreground transition-colors">
-                Аналитика
-              </a>
               <a href="#roadmap" className="text-muted-foreground hover:text-foreground transition-colors">
                 Дорожная карта
               </a>
@@ -152,108 +142,6 @@ function Header() {
         )}
       </div>
     </motion.header>
-  );
-}
-
-function FeaturesSection() {
-  const features = [
-    {
-      icon: <Search className="w-8 h-8 text-accent" />,
-      title: "Умный поиск",
-      description: "Мощный полнотекстовый поиск по миллионам фанфиков с фильтрами и рекомендациями.",
-    },
-    {
-      icon: <BookOpen className="w-8 h-8 text-accent" />,
-      title: "Универсальная читалка",
-      description: "Современная читалка с настройками шрифтов, тем и синхронизацией между устройствами.",
-    },
-    {
-      icon: <Users className="w-8 h-8 text-accent" />,
-      title: "Сообщество авторов",
-      description: "Прямое взаимодействие с авторами, поддержка творчества и монетизация контента.",
-    },
-    {
-      icon: <Shield className="w-8 h-8 text-accent" />,
-      title: "Безопасность и приватность",
-      description: "Защита персональных данных, модерация контента и безопасная среда для чтения.",
-    },
-    {
-      icon: <Zap className="w-8 h-8 text-accent" />,
-      title: "Быстрая синхронизация",
-      description: "Мгновенная синхронизация закладок, истории чтения и настроек между всеми устройствами.",
-    },
-    {
-      icon: <Target className="w-8 h-8 text-accent" />,
-      title: "Персонализация",
-      description: "AI-рекомендации на основе ваших предпочтений и история чтения.",
-    },
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-      },
-    },
-  };
-
-  return (
-    <section id="features" className="py-20 bg-muted/30 relative overflow-hidden">
-      <div className="absolute top-20 left-10 w-64 h-64 bg-blue-400/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/5 rounded-full blur-3xl" />
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            Всё необходимое для комфортного чтения
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Мощные инструменты для поиска, чтения и взаимодействия с фанфик-сообществом
-          </p>
-        </motion.div>
-
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {features.map((feature, index) => (
-            <motion.div key={index} variants={itemVariants}>
-              <Card className="border-border hover:shadow-2xl transition-all duration-500 hover:scale-105 h-full bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <div className="mb-4">{feature.icon}</div>
-                  <CardTitle className="text-xl text-card-foreground">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-muted-foreground">{feature.description}</CardDescription>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
   );
 }
 
@@ -320,7 +208,9 @@ function PricingSection() {
           <h2 className="text-4xl font-bold text-foreground mb-4">
             Гибкие тарифы для каждого
           </h2>
-          <p className="text-xl text-muted-foreground">Выберите план, подходящий именно вам</p>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Выберите план, подходящий именно вам
+          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
@@ -349,7 +239,7 @@ function PricingSection() {
                 )}
                 
                 <CardHeader className="text-center pb-4 flex-shrink-0">
-                  <CardTitle className="text-2xl text-card-foreground text-balance">
+                  <CardTitle className="text-2xl text-card-foreground">
                     {plan.name}
                   </CardTitle>
                   <div className="mt-4">
@@ -360,7 +250,7 @@ function PricingSection() {
                       {plan.period}
                     </span>
                   </div>
-                  <p className="mt-3 text-base text-muted-foreground text-pretty">
+                  <p className="mt-3 text-base text-muted-foreground">
                     {plan.description}
                   </p>
                 </CardHeader>
@@ -377,7 +267,7 @@ function PricingSection() {
                         className="flex items-start"
                       >
                         <CheckCircle className="w-5 h-5 text-accent mr-3 flex-shrink-0 mt-0.5" />
-                        <span className="text-card-foreground text-pretty leading-relaxed">
+                        <span className="text-card-foreground leading-relaxed">
                           {feature}
                         </span>
                       </motion.li>
@@ -490,7 +380,7 @@ function Footer() {
       <div className="absolute top-0 left-1/3 w-72 h-72 bg-gradient-to-r from-blue-400/3 to-purple-400/3 rounded-full blur-3xl" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -507,16 +397,8 @@ function Footer() {
               Единая точка входа для миллионов читателей фанфиков.
               Агрегируем контент с самых популярных платформ.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-card-foreground transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                </svg>
-              </a>
-            </div>
           </motion.div>
 
-          {/* Other footer columns */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
