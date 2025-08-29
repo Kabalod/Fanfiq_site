@@ -14,7 +14,7 @@ import { DetailedRoadmap } from "@/components/sections/DetailedRoadmap";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+    <div className="min-h-screen overflow-x-hidden" style={{ backgroundColor: 'var(--background)' }}>
       {/* Header */}
       <Header />
 
@@ -376,7 +376,7 @@ function FinalCTASection() {
 
 function Footer() {
   return (
-    <footer className="bg-card border-t border-border relative">
+    <footer className="bg-card border-t border-border relative overflow-hidden">
       <div className="absolute top-0 left-1/3 w-72 h-72 bg-gradient-to-r from-blue-400/3 to-purple-400/3 rounded-full blur-3xl" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
