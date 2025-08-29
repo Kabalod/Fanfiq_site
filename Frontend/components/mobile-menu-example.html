@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanfiq — Техническая документация</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Fluid Typography Scale */
+            --fs-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+            --fs-sm: clamp(0.875rem, 0.825rem + 0.25vw, 1rem);
+            --fs-base: clamp(1rem, 0.925rem + 0.375vw, 1.125rem);
+            --fs-lg: clamp(1.125rem, 1.025rem + 0.5vw, 1.25rem);
+            --fs-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+            --fs-2xl: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+            --fs-3xl: clamp(1.875rem, 1.575rem + 1.5vw, 2.5rem);
+            --fs-4xl: clamp(2.25rem, 1.8rem + 2.25vw, 3.5rem);
+            
+            /* Fluid Spacing Scale */
+            --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+            --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+            --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+            --space-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+            --space-xl: clamp(2rem, 1.6rem + 2vw, 3rem);
+            --space-2xl: clamp(3rem, 2.4rem + 3vw, 4.5rem);
+            --space-3xl: clamp(4rem, 3.2rem + 4vw, 6rem);
+            
+            /* Container Sizes */
+            --container-xs: min(100% - 2rem, 20rem);
+            --container-sm: min(100% - 2rem, 36rem);
+            --container-md: min(100% - 2rem, 48rem);
+            --container-lg: min(100% - 2rem, 64rem);
+            --container-xl: min(100% - 2rem, 80rem);
+            --container-2xl: min(100% - 2rem, 96rem);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: var(--fs-base);
+            line-height: 1.6;
+        }
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background: #f8fafc;
+            border-left: 3px solid #3b82f6;
+        }
+        .nav-link.active {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            color: #1d4ed8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+        h1, h2, h3 { scroll-margin-top: 2rem; }
+        
+        /* Стили для таблиц */
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        
+        .status-ready { color: #059669; background: #d1fae5; }
+        .status-progress { color: #d97706; background: #fef3c7; }
+        .status-planned { color: #7c3aed; background: #ede9fe; }
+        
+        /* Анимации */
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile styles */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            color: #374151;
+            position: relative;
+            z-index: 60;
+        }
+        
+        .mobile-menu-btn:hover {
+            background-color: #f1f5f9;
+            transform: scale(1.05);
+        }
+        
+        .mobile-menu-btn:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        .mobile-menu-btn svg {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.2s ease;
+        }
+        
+        .mobile-menu-btn:hover svg {
+            transform: rotate(90deg);
+        }
+        
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-overlay.active {
+            opacity: 1;
+        }
+
+        /* Modern responsive grid system */
+        .modern-grid {
+            display: grid;
+            gap: var(--space-md);
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        }
+        
+        .modern-grid-2 {
+            display: grid;
+            gap: var(--space-md);
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        }
+        
+        .modern-grid-3 {
+            display: grid;
+            gap: var(--space-md);
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+        }
+        
+        /* Text flow improvements */
+        p, li {
+            max-width: 65ch;
+            text-wrap: pretty;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            text-wrap: balance;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block !important;
+            }
+            
+            .sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                width: min(85vw, 320px);
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 50;
+                background: white;
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0) !important;
+            }
+            
+            .mobile-overlay {
+                display: block !important;
+                position: fixed !important;
+                inset: 0;
+                background-color: rgba(0, 0, 0, 0.6);
+                z-index: 40;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+            
+            .mobile-overlay.active {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+                padding: var(--space-md) !important;
+            }
+            
+            /* Оптимизация для мобильных */
+            .chart-container {
+                height: 250px;
+            }
+            
+            /* Улучшенные таблицы для мобильных */
+            .mobile-table-scroll {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            table {
+                min-width: 600px;
+            }
+            
+            /* Карточки для мобильных */
+            .mobile-card {
+                margin-bottom: 1rem;
+            }
+            
+            /* Увеличенные touch targets */
+            .nav-link {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Адаптивный заголовок */
+            .header-mobile {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .header-mobile .header-actions {
+                align-self: flex-end;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            /* Еще более компактные стили для очень маленьких экранов */
+            .sidebar {
+                width: 100%;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.25rem;
+            }
+            
+            .grid.grid-cols-1.md\\:grid-cols-2,
+            .grid.grid-cols-1.md\\:grid-cols-3 {
+                gap: 1rem;
+            }
+            
+            .chart-container {
+                height: 200px;
+            }
+        }
+        
+        /* Улучшенная прокрутка на мобильных */
+        @media (max-width: 768px) {
+            body {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .sidebar {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between header-mobile">
+                <div class="flex items-center space-x-3">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Открыть меню">
+                        <span class="sr-only">Открыть главное меню</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">F</span>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-semibold text-gray-900">Fanfiq</h1>
+                        <p class="text-sm text-gray-500 hidden sm:block">Техническая документация проекта</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 text-sm text-gray-500 header-actions">
+                    <span class="hidden sm:inline">Версия 1.0</span>
+                    <span class="hidden sm:inline">•</span>
+                    <span class="hidden sm:inline">Инвесторский питч</span>
+                    <span class="sm:hidden">v1.0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex" style="max-width: var(--container-2xl); margin: 0 auto;">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-white border-r border-gray-200 sidebar" id="sidebar">
+            <nav class="p-4">
+                <div class="mb-4 pt-4 border-t border-gray-200 md:border-t-0 md:pt-0">
+                    <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-2">Содержание</h2>
+                </div>
+                <ul class="space-y-1">
+                    <li><a href="#overview" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">1. Обзор проекта</a></li>
+                    <li><a href="#problem-solution" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">2. Проблема и решение</a></li>
+                    <li><a href="#market" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">3. Анализ рынка</a></li>
+                    <li><a href="#architecture" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">4. Техническая архитектура</a></li>
+                    <li><a href="#roadmap" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">5. Дорожная карта</a></li>
+                    <li><a href="#monetization" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">6. Модель монетизации</a></li>
+                    <li><a href="#development" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">7. Оценка разработки</a></li>
+                    <li><a href="#conclusion" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">8. Заключение</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 content-wrapper" style="padding: var(--space-lg) var(--space-md); max-width: var(--container-lg);">
+            
+            <!-- 1. Project Overview -->
+            <section id="overview" class="fade-in" style="margin-bottom: var(--space-3xl);">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    1. Обзор проекта
+                </h2>
+                
+                <div class="bg-white rounded-lg border border-gray-200" style="padding: var(--space-lg); margin-bottom: var(--space-lg);">
+                    <div class="grid grid-cols-1 md:grid-cols-2" style="gap: var(--space-lg);">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-3">Название проекта</h3>
+                            <p class="text-2xl font-bold text-blue-600 mb-2">Fanfiq</p>
+                            <p class="text-gray-600">Универсальный поиск и читалка фанфиков</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-3">Ключевая концепция</h3>
+                            <p class="text-lg font-medium text-purple-600">"Spotify для фанфиков"</p>
+                            <p class="text-gray-600 text-sm mt-1">Единая точка входа для миллионов читателей</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prose max-w-none">
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong>Fanfiq</strong> — это инновационная поисковая система и универсальная читалка фанфиков, 
+                        которая объединяет контент с самых популярных платформ (Ficbook, AO3, Wattpad и др.) 
+                        и делает его удобным для поиска и чтения в одном приложении.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 2. Problem & Solution -->
+            <section id="problem-solution" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    2. Проблема и решение
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-red-800 mb-3 flex items-center">
+                            <span class="text-red-500 mr-2">⚠️</span>
+                            Текущая проблема
+                        </h3>
+                        <ul class="text-red-700 space-y-2 text-sm">
+                            <li>• Фанфики разбросаны по десяткам разных сайтов</li>
+                            <li>• У каждой платформы неудобный и ограниченный поиск</li>
+                            <li>• Читателям приходится вручную проверять несколько платформ</li>
+                            <li>• Отсутствует единый интерфейс для чтения</li>
+                        </ul>
+                </div>
+
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-green-800 mb-3 flex items-center">
+                            <span class="text-green-500 mr-2">✅</span>
+                            Наше решение
+                        </h3>
+                        <ul class="text-green-700 space-y-2 text-sm">
+                            <li>• Агрегация фанфиков в единую базу данных</li>
+                            <li>• Быстрый и мощный полнотекстовый поиск</li>
+                            <li>• Лучший в классе ридер для комфортного чтения</li>
+                            <li>• Единое приложение для всех потребностей читателей</li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+
+            <!-- 3. Market Analysis -->
+            <section id="market" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    3. Анализ рынка
+                </h2>
+
+                <div class="modern-grid-2">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Размер рынка</h3>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-blue-800 font-medium">Россия</span>
+                                    <span class="text-2xl font-bold text-blue-600">2М+</span>
+                                </div>
+                                <p class="text-blue-600 text-sm">активных читателей</p>
+                            </div>
+                            
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-purple-800 font-medium">Глобально</span>
+                                    <span class="text-2xl font-bold text-purple-600">50М+</span>
+                                </div>
+                                <p class="text-purple-600 text-sm">пользователей</p>
+                            </div>
+
+                            <div class="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                                <p>• AO3: 5+ миллионов зарегистрированных пользователей</p>
+                                <p>• Десятки миллионов читателей по всему миру</p>
+                            </div>
+                        </div>
+                </div>
+
+                <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Распределение платформ</h3>
+                        <div class="chart-container bg-white border border-gray-200 rounded-lg p-4">
+                        <canvas id="marketChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+            <!-- 4. Technical Architecture -->
+            <section id="architecture" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    4. Техническая архитектура
+                </h2>
+
+                <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Поток данных</h3>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-medium">Frontend (Next.js)</div>
+                        <span class="text-gray-400">→</span>
+                        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-medium">API (FastAPI)</div>
+                        <span class="text-gray-400">→</span>
+                        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-medium">Workers (Celery)</div>
+                        <span class="text-gray-400">→</span>
+                        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-medium">DB (PostgreSQL + Redis)</div>
+                    </div>
+                </div>
+
+                <div class="prose max-w-none">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Ключевые особенности</h3>
+                    <ul class="text-gray-700 space-y-2">
+                        <li>• <strong>Модульная архитектура (monorepo)</strong> — легкое масштабирование системы</li>
+                        <li>• <strong>Быстрое добавление парсеров</strong> — новые сайты без остановки сервиса</li>
+                        <li>• <strong>Высокая производительность</strong> — готовность к большим нагрузкам</li>
+                        <li>• <strong>Автоматический деплой</strong> — Docker + Railway</li>
+                    </ul>
+            </div>
+        </section>
+
+            <!-- 5. Roadmap -->
+            <section id="roadmap" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    5. Дорожная карта развития
+                </h2>
+
+                <div class="bg-white border border-gray-200 rounded-lg mobile-table-scroll">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Этап</th>
+                                    <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
+                                    <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Срок</th>
+                                    <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Трудозатраты</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">1. MVP</div>
+                                    <div class="text-sm text-gray-500">API, база данных, парсер Ficbook.net, веб-интерфейс</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="status-ready px-2 py-1 text-xs font-semibold rounded-full">Готово</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">Завершено</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">59–80 ч / 12–18 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">2. Рост в РФ</div>
+                                    <div class="text-sm text-gray-500">Author.Today, Litnet, первая версия читалки</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="status-progress px-2 py-1 text-xs font-semibold rounded-full">В работе</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 7 дней</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">58–77 ч / 12–18 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                                                        <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">3. Функции пользователей</div>
+                                    <div class="text-sm text-gray-500">Регистрация, закладки, история, подписки</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="status-planned px-2 py-1 text-xs font-semibold rounded-full">Планируется</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 1 неделя</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">55–75 ч / 12–15 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">4. UX & Mobile</div>
+                                    <div class="text-sm text-gray-500">Читалка с настройками, PWA-приложение</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="status-planned px-2 py-1 text-xs font-semibold rounded-full">Планируется</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 1 неделя</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">62–83 ч / 12–18 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">5. Международный рынок</div>
+                                    <div class="text-sm text-gray-500">AO3, Fanfiction.net, локализация EN</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="status-planned px-2 py-1 text-xs font-semibold rounded-full">Планируется</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 1 неделя</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">72–98 ч / 15–21 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">6. Монетизация</div>
+                                    <div class="text-sm text-gray-500">Pro-аккаунты, рекомендации, реклама</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="status-planned px-2 py-1 text-xs font-semibold rounded-full">Планируется</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 1 неделя</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">67–93 ч / 15–21 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </section>
+
+            <!-- 6. Monetization -->
+            <section id="monetization" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    6. Модель монетизации
+                </h2>
+
+                <div class="modern-grid-3" style="margin-bottom: var(--space-lg);">
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">💎 Pro-аккаунты</h3>
+                        <div class="text-2xl font-bold text-blue-600 mb-2">$3–5/мес</div>
+                        <div class="text-sm text-gray-600 mb-3">× 5% аудитории</div>
+                        <div class="bg-blue-50 p-3 rounded text-sm">
+                            <div class="font-medium text-blue-800">Пример расчета:</div>
+                            <div class="text-blue-700">50,000 пользователей</div>
+                            <div class="text-blue-700">= $90k–$150k/мес</div>
+                    </div>
+                </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">📢 Реклама</h3>
+                        <div class="text-2xl font-bold text-orange-600 mb-2">$2–4</div>
+                        <div class="text-sm text-gray-600 mb-3">CPM</div>
+                        <div class="bg-orange-50 p-3 rounded text-sm">
+                            <div class="font-medium text-orange-800">Особенности:</div>
+                            <div class="text-orange-700">Нативная интеграция</div>
+                            <div class="text-orange-700">в поиск и читалку</div>
+                    </div>
+                </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">🤝 Партнёрства</h3>
+                        <div class="text-2xl font-bold text-purple-600 mb-2">5–10%</div>
+                        <div class="text-sm text-gray-600 mb-3">от продаж</div>
+                        <div class="bg-purple-50 p-3 rounded text-sm">
+                            <div class="font-medium text-purple-800">Направления:</div>
+                            <div class="text-purple-700">Авторы и издательства</div>
+                            <div class="text-purple-700">Продвижение произведений</div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Стратегия внедрения</h3>
+                    <p class="text-gray-700">
+                        Модель монетизации рассчитана на быстрый выход на окупаемость и стабильный рост. 
+                        Основной доход будет генерироваться от Pro-подписок с дополнительными функциями 
+                        для самых активных пользователей.
+                    </p>
+                    </div>
+            </section>
+
+            <!-- 7. Development Estimation -->
+            <section id="development" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    7. Оценка времени разработки
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">🐌 Традиционная разработка</h3>
+                        <div class="text-3xl font-bold text-gray-800 mb-2">373–506 часов</div>
+                        <div class="text-gray-600 mb-4">(2.5–3 месяца full-time)</div>
+                        <div class="text-sm text-gray-500">Middle-разработчик, стандартный подход</div>
+                </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-4">🚀 С ИИ-ассистентом</h3>
+                        <div class="text-3xl font-bold text-blue-600 mb-2">27–36 часов</div>
+                        <div class="text-blue-700 mb-4">(6–9 рабочих дней)</div>
+                        <div class="text-sm text-blue-600">Разработка с помощью ИИ-инструментов</div>
+                    </div>
+                </div>
+
+                <div class="text-center bg-green-50 border border-green-200 rounded-lg p-6">
+                    <div class="text-4xl font-bold text-green-600 mb-2">~14x</div>
+                    <p class="text-green-800 font-medium">ускорение разработки с ИИ</p>
+            </div>
+        </section>
+
+            <!-- 8. Conclusion -->
+            <section id="conclusion" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    8. Заключение
+                </h2>
+
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-8">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                            ✨ Fanfiq = "Spotify для фанфиков"
+                        </h3>
+                        <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-6">
+                            Мы создаем единую, удобную и функциональную точку входа 
+                            для миллионов читателей по всему миру.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-600">50M+</div>
+                                <div class="text-sm text-gray-600">Потенциальных пользователей</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-green-600">6 недель</div>
+                                <div class="text-sm text-gray-600">До полной готовности</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-purple-600">14x</div>
+                                <div class="text-sm text-gray-600">Ускорение с ИИ</div>
+                </div>
+                </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    </div>
+
+    <script>
+        // Navigation highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing mobile menu...');
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            
+            console.log('Elements found:', {
+                sidebar: !!sidebar,
+                mobileMenuBtn: !!mobileMenuBtn,
+                mobileOverlay: !!mobileOverlay,
+                navLinks: navLinks.length
+            });
+            
+            // Mobile menu functionality
+            function toggleMobileMenu(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Toggle mobile menu clicked');
+                
+                if (!sidebar || !mobileOverlay) {
+                    console.error('Sidebar or overlay not found');
+                    return;
+                }
+                
+                const isActive = sidebar.classList.contains('active');
+                
+                if (isActive) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            }
+            
+            function openMobileMenu() {
+                console.log('Opening mobile menu');
+                sidebar.classList.add('active');
+                mobileOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMobileMenu() {
+                console.log('Closing mobile menu');
+                sidebar.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Add event listeners with error handling
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+                mobileMenuBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    toggleMobileMenu(e);
+                });
+                console.log('Mobile menu button listeners added');
+            } else {
+                console.error('Mobile menu button not found');
+            }
+            
+            if (mobileOverlay) {
+                mobileOverlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeMobileMenu();
+                });
+                console.log('Mobile overlay listener added');
+            }
+            
+            // Close mobile menu when clicking on nav link
+            navLinks.forEach((link, index) => {
+                link.addEventListener('click', function(e) {
+                    console.log(`Nav link ${index} clicked`);
+                    if (window.innerWidth <= 768) {
+                        setTimeout(() => {
+                            closeMobileMenu();
+                        }, 100);
+                    }
+                });
+            });
+            
+            // Close mobile menu on window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    closeMobileMenu();
+                }
+            });
+            
+            function updateActiveLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    if (window.pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', updateActiveLink);
+            updateActiveLink();
+            
+            // Smooth scrolling
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+            
+            console.log('Mobile menu initialization complete');
+        });
+
+        // Chart
+        const ctx = document.getElementById('marketChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Ficbook', 'AO3', 'Wattpad', 'Другие'],
+                datasets: [{
+                    data: [20, 50, 25, 5],
+                    backgroundColor: ['#3b82f6', '#8b5cf6', '#06d6a0', '#64748b'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#374151',
+                            font: { size: 12 },
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

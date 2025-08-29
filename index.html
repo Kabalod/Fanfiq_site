@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanfiq — Техническая документация</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Fluid Typography Scale */
+            --fs-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+            --fs-sm: clamp(0.875rem, 0.825rem + 0.25vw, 1rem);
+            --fs-base: clamp(1rem, 0.925rem + 0.375vw, 1.125rem);
+            --fs-lg: clamp(1.125rem, 1.025rem + 0.5vw, 1.25rem);
+            --fs-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+            --fs-2xl: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+            --fs-3xl: clamp(1.875rem, 1.575rem + 1.5vw, 2.5rem);
+            --fs-4xl: clamp(2.25rem, 1.8rem + 2.25vw, 3.5rem);
+
+            /* Fluid Spacing Scale */
+            --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+            --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+            --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+            --space-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+            --space-xl: clamp(2rem, 1.6rem + 2vw, 3rem);
+            --space-2xl: clamp(3rem, 2.4rem + 3vw, 4.5rem);
+            --space-3xl: clamp(4rem, 3.2rem + 4vw, 6rem);
+
+            /* Container Sizes */
+            --container-xs: min(100% - 2rem, 20rem);
+            --container-sm: min(100% - 2rem, 36rem);
+            --container-md: min(100% - 2rem, 48rem);
+            --container-lg: min(100% - 2rem, 64rem);
+            --container-xl: min(100% - 2rem, 80rem);
+            --container-2xl: min(100% - 2rem, 96rem);
+
+            /* shadcn/ui Color System */
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 221.2 83.2% 53.3%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96%;
+            --secondary-foreground: 222.2 84% 4.9%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96%;
+            --accent-foreground: 222.2 84% 4.9%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 221.2 83.2% 53.3%;
+            --radius: 0.5rem;
+        }
+
+        .dark {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --card: 222.2 84% 4.9%;
+            --card-foreground: 210 40% 98%;
+            --popover: 222.2 84% 4.9%;
+            --popover-foreground: 210 40% 98%;
+            --primary: 217.2 91.2% 59.8%;
+            --primary-foreground: 222.2 84% 4.9%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+            --input: 217.2 32.6% 17.5%;
+            --ring: 224.3 76.3% 94.1%;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: var(--fs-base);
+            line-height: 1.6;
+        }
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background: #f8fafc;
+            border-left: 3px solid #3b82f6;
+        }
+        .nav-link.active {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            color: #1d4ed8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+        h1, h2, h3 { scroll-margin-top: 2rem; }
+        
+        /* Стили для таблиц */
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        
+        .status-ready { color: #059669; background: #d1fae5; }
+        .status-progress { color: #d97706; background: #fef3c7; }
+        .status-planned { color: #7c3aed; background: #ede9fe; }
+        
+        /* Анимации */
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile styles */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            color: #374151;
+            position: relative;
+            z-index: 60;
+        }
+        
+        .mobile-menu-btn:hover {
+            background-color: #f1f5f9;
+            transform: scale(1.05);
+        }
+        
+        .mobile-menu-btn:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        .mobile-menu-btn svg {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.2s ease;
+        }
+        
+        .mobile-menu-btn:hover svg {
+            transform: rotate(90deg);
+        }
+        
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-overlay.active {
+            opacity: 1;
+        }
+
+        /* Modern responsive grid system */
+        .modern-grid {
+            display: grid;
+            gap: var(--space-md);
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        }
+
+        .modern-grid-2 {
+            display: grid;
+            gap: var(--space-md);
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        }
+
+        .modern-grid-3 {
+            display: grid;
+            gap: var(--space-md);
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+        }
+
+        /* shadcn/ui inspired components */
+        .shadcn-alert {
+            border-radius: calc(var(--radius) - 2px);
+            border: 1px solid hsl(var(--border));
+            padding: var(--space-md);
+            position: relative;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            display: grid;
+            grid-template-columns: calc(var(--spacing) * 4) 1fr;
+            gap: var(--space-sm);
+            align-items: flex-start;
+        }
+
+        .shadcn-alert-destructive {
+            border-color: hsl(var(--destructive));
+            color: hsl(var(--destructive));
+        }
+
+        .shadcn-alert-default {
+            border-color: hsl(var(--border));
+            color: hsl(var(--foreground));
+        }
+
+        .shadcn-alert-icon {
+            width: var(--fs-lg);
+            height: var(--fs-lg);
+            flex-shrink: 0;
+        }
+
+        .shadcn-progress {
+            position: relative;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+            border-radius: calc(var(--radius) - 2px);
+            background-color: hsl(var(--muted));
+        }
+
+        .shadcn-progress-indicator {
+            height: 100%;
+            width: 100%;
+            background-color: hsl(var(--primary));
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .shadcn-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .shadcn-tabs-list {
+            background-color: hsl(var(--muted));
+            border-radius: calc(var(--radius) - 2px);
+            padding: 3px;
+            display: inline-flex;
+            width: fit-content;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shadcn-tabs-trigger {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 0.5rem 1rem;
+            border-radius: calc(var(--radius) - 4px);
+            font-size: var(--fs-sm);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .shadcn-tabs-trigger[data-state="active"] {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+
+        .shadcn-tabs-content {
+            outline: none;
+        }
+
+        .shadcn-separator {
+            background-color: hsl(var(--border));
+            flex-shrink: 0;
+        }
+
+        .shadcn-separator-horizontal {
+            height: 1px;
+            width: 100%;
+        }
+
+        .shadcn-separator-vertical {
+            height: 100%;
+            width: 1px;
+        }
+
+        .shadcn-avatar {
+            position: relative;
+            display: flex;
+            height: 2.5rem;
+            width: 2.5rem;
+            flex-shrink: 0;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+
+        .shadcn-avatar-image {
+            aspect-square;
+            height: 100%;
+            width: 100%;
+        }
+
+        .shadcn-avatar-fallback {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            background-color: hsl(var(--muted));
+            border-radius: 50%;
+            font-size: var(--fs-sm);
+            font-weight: 500;
+        }
+
+        /* Timeline component */
+        .timeline {
+            position: relative;
+            padding-left: var(--space-xl);
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--muted)));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--space-xl);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.75rem;
+            top: 0.25rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: hsl(var(--primary));
+            border: 2px solid hsl(var(--background));
+        }
+
+        .timeline-content {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) - 2px);
+            padding: var(--space-lg);
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .stats-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) - 2px);
+            padding: var(--space-lg);
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        .stats-number {
+            font-size: var(--fs-4xl);
+            font-weight: 700;
+            color: hsl(var(--primary));
+            margin-bottom: var(--space-sm);
+        }
+
+        .stats-label {
+            font-size: var(--fs-sm);
+            color: hsl(var(--muted-foreground));
+            font-weight: 500;
+        }
+
+        /* Enhanced animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Interactive elements */
+        .interactive-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .interactive-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        /* Notification badge */
+        .notification-badge {
+            position: relative;
+        }
+
+        .notification-badge::after {
+            content: attr(data-count);
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: hsl(var(--destructive));
+            color: white;
+            border-radius: 50%;
+            width: 1.25rem;
+            height: 1.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .shadcn-card {
+            border-radius: calc(var(--radius) - 2px);
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--card));
+            color: hsl(var(--card-foreground));
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .shadcn-card:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        .shadcn-card-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1.5rem 1.5rem 0;
+        }
+
+        .shadcn-card-title {
+            font-size: var(--fs-xl);
+            font-weight: 600;
+            line-height: 1.375;
+            letter-spacing: -0.025em;
+        }
+
+        .shadcn-card-description {
+            font-size: var(--fs-sm);
+            color: hsl(var(--muted-foreground));
+        }
+
+        .shadcn-card-content {
+            padding: 1.5rem;
+        }
+
+        .shadcn-card-footer {
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .shadcn-badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: calc(var(--radius) - 2px);
+            border: 1px solid transparent;
+            padding: 0.125rem 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+            letter-spacing: 0.025em;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .shadcn-badge-default {
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+        }
+
+        .shadcn-badge-destructive {
+            background-color: hsl(var(--destructive));
+            color: hsl(var(--destructive-foreground));
+        }
+
+        .shadcn-badge-secondary {
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+        }
+
+        .shadcn-badge-outline {
+            border-color: hsl(var(--border));
+            color: hsl(var(--foreground));
+        }
+
+        .shadcn-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: calc(var(--radius) - 2px);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 1px solid transparent;
+            padding: 0.5rem 1rem;
+            height: 2.5rem;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .shadcn-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .shadcn-button-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .shadcn-button-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+
+        .shadcn-button-secondary {
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+        }
+
+        .shadcn-button-secondary:hover {
+            background-color: hsl(var(--secondary) / 0.8);
+        }
+
+        .shadcn-button-outline {
+            border-color: hsl(var(--border));
+            background-color: transparent;
+            color: hsl(var(--foreground));
+        }
+
+        .shadcn-button-outline:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+        
+        /* Text flow improvements */
+        p, li {
+            max-width: 65ch;
+            text-wrap: pretty;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            text-wrap: balance;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block !important;
+            }
+            
+            .sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                width: min(85vw, 320px);
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 50;
+                background: white;
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0) !important;
+            }
+            
+            .mobile-overlay {
+                display: block !important;
+                position: fixed !important;
+                inset: 0;
+                background-color: rgba(0, 0, 0, 0.6);
+                z-index: 40;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+            
+            .mobile-overlay.active {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            
+            .content-wrapper {
+                margin-left: 0 !important;
+                padding: var(--space-md) !important;
+            }
+            
+            /* Оптимизация для мобильных */
+            .chart-container {
+                height: 250px;
+            }
+            
+            /* Улучшенные таблицы для мобильных */
+            .mobile-table-scroll {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            table {
+                min-width: 600px;
+            }
+            
+            /* Карточки для мобильных */
+            .mobile-card {
+                margin-bottom: 1rem;
+            }
+            
+            /* Увеличенные touch targets */
+            .nav-link {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Адаптивный заголовок */
+            .header-mobile {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .header-mobile .header-actions {
+                align-self: flex-end;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            /* Еще более компактные стили для очень маленьких экранов */
+            .sidebar {
+                width: 100%;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.25rem;
+            }
+            
+            .grid.grid-cols-1.md\\:grid-cols-2,
+            .grid.grid-cols-1.md\\:grid-cols-3 {
+                gap: 1rem;
+            }
+            
+            .chart-container {
+                height: 200px;
+            }
+        }
+        
+        /* Улучшенная прокрутка на мобильных */
+        @media (max-width: 768px) {
+            body {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .sidebar {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between header-mobile">
+                <div class="flex items-center space-x-3">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Открыть меню">
+                        <span class="sr-only">Открыть главное меню</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">F</span>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-semibold text-gray-900">Fanfiq</h1>
+                        <p class="text-sm text-gray-500 hidden sm:block">Техническая документация проекта</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3 header-actions">
+                    <!-- Notification Badge -->
+                    <div class="notification-badge" data-count="3">
+                        <button class="shadcn-button shadcn-button-outline" aria-label="Уведомления">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM21 12a9 9 0 01-9 9 9 9 0 01-9-9 9 9 0 019-9c2.4 0 4.6.9 6.2 2.5"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="shadcn-button shadcn-button-outline" aria-label="Переключить тему">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </button>
+
+                    <div class="hidden sm:flex items-center space-x-2 text-sm text-gray-500">
+                        <span class="shadcn-badge shadcn-badge-secondary">v1.0</span>
+                        <span>•</span>
+                        <span>Инвесторский питч</span>
+                    </div>
+                    <span class="sm:hidden shadcn-badge shadcn-badge-secondary">v1.0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section with Enhanced Components -->
+    <section class="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="relative max-w-7xl mx-auto px-6 py-16 lg:py-24">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Hero Content -->
+                <div class="animate-fade-in-up">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <span class="shadcn-badge shadcn-badge-secondary bg-white/20 text-white border-white/30">
+                            🚀 MVP Готов
+                        </span>
+                        <span class="shadcn-badge shadcn-badge-secondary bg-green-500/20 text-green-100 border-green-300/30">
+                            🔥 Популярный рынок
+                        </span>
+                    </div>
+
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                        Fanfiq
+                        <span class="block text-2xl md:text-4xl font-medium text-blue-200 mt-2">
+                            "Spotify для фанфиков"
+                        </span>
+                    </h1>
+
+                    <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+                        Единая точка входа для миллионов читателей фанфиков. Агрегируем контент с самых популярных платформ в одном удобном приложении.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                        <button class="shadcn-button shadcn-button-primary bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 text-lg font-semibold">
+                            🚀 Начать использовать
+                        </button>
+                        <button class="shadcn-button shadcn-button-outline border-white text-white hover:bg-white/10 px-8 py-3 text-lg">
+                            📖 Изучить документацию
+                        </button>
+                    </div>
+
+                    <!-- Progress Section -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <span class="mr-2">📊</span>
+                            Прогресс разработки
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>MVP</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="shadcn-progress">
+                                    <div class="shadcn-progress-indicator" style="transform: translateX(-0%);"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Российский рынок</span>
+                                    <span>75%</span>
+                                </div>
+                                <div class="shadcn-progress">
+                                    <div class="shadcn-progress-indicator" style="transform: translateX(-25%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Stats -->
+                <div class="animate-slide-in">
+                    <div class="stats-grid">
+                        <div class="stats-card interactive-card bg-white/10 backdrop-blur-sm border-white/20">
+                            <div class="stats-number text-white">2M+</div>
+                            <div class="stats-label text-blue-100">Читателей в России</div>
+                        </div>
+
+                        <div class="stats-card interactive-card bg-white/10 backdrop-blur-sm border-white/20">
+                            <div class="stats-number text-white">50M+</div>
+                            <div class="stats-label text-blue-100">Глобальных пользователей</div>
+                        </div>
+
+                        <div class="stats-card interactive-card bg-white/10 backdrop-blur-sm border-white/20">
+                            <div class="stats-number text-white">14x</div>
+                            <div class="stats-label text-blue-100">Ускорение с ИИ</div>
+                        </div>
+
+                        <div class="stats-card interactive-card bg-white/10 backdrop-blur-sm border-white/20">
+                            <div class="stats-number text-white">6 нед</div>
+                            <div class="stats-label text-blue-100">До полной готовности</div>
+                        </div>
+                    </div>
+
+                    <!-- Team Section -->
+                    <div class="mt-8 bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                        <h3 class="text-lg font-semibold mb-4">👥 Команда проекта</h3>
+                        <div class="flex items-center space-x-3">
+                            <div class="shadcn-avatar">
+                                <div class="shadcn-avatar-fallback bg-blue-500 text-white">ИИ</div>
+                            </div>
+                            <div class="shadcn-avatar">
+                                <div class="shadcn-avatar-fallback bg-purple-500 text-white">Д</div>
+                            </div>
+                            <div class="shadcn-avatar">
+                                <div class="shadcn-avatar-fallback bg-green-500 text-white">Р</div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-white">ИИ-ассистент + разработчик</p>
+                                <p class="text-xs text-blue-200">MVP готов к запуску</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="flex" style="max-width: var(--container-2xl); margin: 0 auto;">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-white border-r border-gray-200 sidebar" id="sidebar">
+            <nav class="p-4">
+                <div class="mb-4 pt-4 border-t border-gray-200 md:border-t-0 md:pt-0">
+                    <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-2">Содержание</h2>
+                </div>
+                <ul class="space-y-1">
+                    <li><a href="#overview" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">1. Обзор проекта</a></li>
+                    <li><a href="#problem-solution" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">2. Проблема и решение</a></li>
+                    <li><a href="#market" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">3. Анализ рынка</a></li>
+                    <li><a href="#architecture" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">4. Техническая архитектура</a></li>
+                    <li><a href="#roadmap" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">5. Дорожная карта</a></li>
+                    <li><a href="#monetization" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">6. Модель монетизации</a></li>
+                    <li><a href="#development" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">7. Временная шкала</a></li>
+                    <li><a href="#timeline" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">8. Детальная карта</a></li>
+                    <li><a href="#alerts" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">9. Уведомления</a></li>
+                    <li><a href="#conclusion" class="nav-link block px-3 py-2 text-sm font-medium text-gray-700 rounded-md">10. Заключение</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 content-wrapper" style="padding: var(--space-lg) var(--space-md); max-width: var(--container-lg);">
+            
+            <!-- 1. Project Overview -->
+            <section id="overview" class="fade-in" style="margin-bottom: var(--space-3xl);">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    1. Обзор проекта
+                </h2>
+                
+                <div class="shadcn-card">
+                    <div class="shadcn-card-content">
+                        <div class="modern-grid-2">
+                            <div class="shadcn-card">
+                                <div class="shadcn-card-header">
+                                    <h3 class="shadcn-card-title">Название проекта</h3>
+                                </div>
+                                <div class="shadcn-card-content">
+                                    <p class="text-2xl font-bold text-blue-600 mb-2">Fanfiq</p>
+                                    <p class="text-gray-600">Универсальный поиск и читалка фанфиков</p>
+                                </div>
+                            </div>
+                            <div class="shadcn-card">
+                                <div class="shadcn-card-header">
+                                    <h3 class="shadcn-card-title">Ключевая концепция</h3>
+                                </div>
+                                <div class="shadcn-card-content">
+                                    <p class="text-lg font-medium text-purple-600">"Spotify для фанфиков"</p>
+                                    <p class="text-gray-600 text-sm mt-1">Единая точка входа для миллионов читателей</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prose max-w-none">
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong>Fanfiq</strong> — это инновационная поисковая система и универсальная читалка фанфиков, 
+                        которая объединяет контент с самых популярных платформ (Ficbook, AO3, Wattpad и др.) 
+                        и делает его удобным для поиска и чтения в одном приложении.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 2. Problem & Solution -->
+            <section id="problem-solution" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    2. Проблема и решение
+                </h2>
+
+                                <div class="modern-grid-2">
+                    <div class="shadcn-card border-red-200 bg-red-50/50">
+                        <div class="shadcn-card-header">
+                            <h3 class="shadcn-card-title text-red-800 flex items-center">
+                                <span class="text-red-500 mr-2">⚠️</span>
+                                Текущая проблема
+                            </h3>
+                        </div>
+                        <div class="shadcn-card-content">
+                            <ul class="text-red-700 space-y-2 text-sm">
+                                <li>• Фанфики разбросаны по десяткам разных сайтов</li>
+                                <li>• У каждой платформы неудобный и ограниченный поиск</li>
+                                <li>• Читателям приходится вручную проверять несколько платформ</li>
+                                <li>• Отсутствует единый интерфейс для чтения</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="shadcn-card border-green-200 bg-green-50/50">
+                        <div class="shadcn-card-header">
+                            <h3 class="shadcn-card-title text-green-800 flex items-center">
+                                <span class="text-green-500 mr-2">✅</span>
+                                Наше решение
+                            </h3>
+                        </div>
+                        <div class="shadcn-card-content">
+                            <ul class="text-green-700 space-y-2 text-sm">
+                                <li>• Агрегация фанфиков в единую базу данных</li>
+                                <li>• Быстрый и мощный полнотекстовый поиск</li>
+                                <li>• Лучший в классе ридер для комфортного чтения</li>
+                                <li>• Единое приложение для всех потребностей читателей</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+            <!-- 3. Market Analysis -->
+            <section id="market" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    3. Анализ рынка
+                </h2>
+
+                <div class="modern-grid-2">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Размер рынка</h3>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-blue-800 font-medium">Россия</span>
+                                    <span class="text-2xl font-bold text-blue-600">2М+</span>
+                                </div>
+                                <p class="text-blue-600 text-sm">активных читателей</p>
+                            </div>
+                            
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-purple-800 font-medium">Глобально</span>
+                                    <span class="text-2xl font-bold text-purple-600">50М+</span>
+                                </div>
+                                <p class="text-purple-600 text-sm">пользователей</p>
+                            </div>
+
+                            <div class="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                                <p>• AO3: 5+ миллионов зарегистрированных пользователей</p>
+                                <p>• Десятки миллионов читателей по всему миру</p>
+                            </div>
+                        </div>
+                </div>
+
+                <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Распределение платформ</h3>
+                        <div class="chart-container bg-white border border-gray-200 rounded-lg p-4">
+                        <canvas id="marketChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+            <!-- 4. Technical Architecture -->
+            <section id="architecture" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    4. Техническая архитектура
+                </h2>
+
+                <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Поток данных</h3>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-medium">Frontend (Next.js)</div>
+                        <span class="text-gray-400">→</span>
+                        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-medium">API (FastAPI)</div>
+                        <span class="text-gray-400">→</span>
+                        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-medium">Workers (Celery)</div>
+                        <span class="text-gray-400">→</span>
+                        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-medium">DB (PostgreSQL + Redis)</div>
+                    </div>
+                </div>
+
+                <div class="prose max-w-none">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Ключевые особенности</h3>
+                    <ul class="text-gray-700 space-y-2">
+                        <li>• <strong>Модульная архитектура (monorepo)</strong> — легкое масштабирование системы</li>
+                        <li>• <strong>Быстрое добавление парсеров</strong> — новые сайты без остановки сервиса</li>
+                        <li>• <strong>Высокая производительность</strong> — готовность к большим нагрузкам</li>
+                        <li>• <strong>Автоматический деплой</strong> — Docker + Railway</li>
+                    </ul>
+            </div>
+        </section>
+
+            <!-- 5. Roadmap -->
+            <section id="roadmap" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    5. Дорожная карта развития
+                </h2>
+
+                <div class="bg-white border border-gray-200 rounded-lg mobile-table-scroll">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Этап</th>
+                                    <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
+                                    <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Срок</th>
+                                    <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Трудозатраты</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">1. MVP</div>
+                                    <div class="text-sm text-gray-500">API, база данных, парсер Ficbook.net, веб-интерфейс</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="shadcn-badge shadcn-badge-default">Готово</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">Завершено</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">59–80 ч / 12–18 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">2. Рост в РФ</div>
+                                    <div class="text-sm text-gray-500">Author.Today, Litnet, первая версия читалки</div>
+                                </td>
+                                                                <td class="px-3 md:px-6 py-4">
+                                    <span class="shadcn-badge shadcn-badge-secondary">В работе</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 7 дней</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">58–77 ч / 12–18 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">3. Функции пользователей</div>
+                                    <div class="text-sm text-gray-500">Регистрация, закладки, история, подписки</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="shadcn-badge shadcn-badge-outline">Планируется</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 1 неделя</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">55–75 ч / 12–15 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">4. UX & Mobile</div>
+                                    <div class="text-sm text-gray-500">Читалка с настройками, PWA-приложение</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="shadcn-badge shadcn-badge-outline">Планируется</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 1 неделя</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">62–83 ч / 12–18 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">5. Международный рынок</div>
+                                    <div class="text-sm text-gray-500">AO3, Fanfiction.net, локализация EN</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="shadcn-badge shadcn-badge-outline">Планируется</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 1 неделя</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">72–98 ч / 15–21 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">6. Монетизация</div>
+                                    <div class="text-sm text-gray-500">Pro-аккаунты, рекомендации, реклама</div>
+                                </td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <span class="shadcn-badge shadcn-badge-outline">Планируется</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-4 text-sm text-gray-900">≈ 1 неделя</td>
+                                <td class="px-3 md:px-6 py-4">
+                                    <div class="text-sm text-gray-900">67–93 ч / 15–21 ч (ИИ)</div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </section>
+
+            <!-- 6. Monetization -->
+            <section id="monetization" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    6. Модель монетизации
+                </h2>
+
+                <div class="modern-grid-3" style="margin-bottom: var(--space-lg);">
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">💎 Pro-аккаунты</h3>
+                        <div class="text-2xl font-bold text-blue-600 mb-2">$3–5/мес</div>
+                        <div class="text-sm text-gray-600 mb-3">× 5% аудитории</div>
+                        <div class="bg-blue-50 p-3 rounded text-sm">
+                            <div class="font-medium text-blue-800">Пример расчета:</div>
+                            <div class="text-blue-700">50,000 пользователей</div>
+                            <div class="text-blue-700">= $90k–$150k/мес</div>
+                    </div>
+                </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">📢 Реклама</h3>
+                        <div class="text-2xl font-bold text-orange-600 mb-2">$2–4</div>
+                        <div class="text-sm text-gray-600 mb-3">CPM</div>
+                        <div class="bg-orange-50 p-3 rounded text-sm">
+                            <div class="font-medium text-orange-800">Особенности:</div>
+                            <div class="text-orange-700">Нативная интеграция</div>
+                            <div class="text-orange-700">в поиск и читалку</div>
+                    </div>
+                </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">🤝 Партнёрства</h3>
+                        <div class="text-2xl font-bold text-purple-600 mb-2">5–10%</div>
+                        <div class="text-sm text-gray-600 mb-3">от продаж</div>
+                        <div class="bg-purple-50 p-3 rounded text-sm">
+                            <div class="font-medium text-purple-800">Направления:</div>
+                            <div class="text-purple-700">Авторы и издательства</div>
+                            <div class="text-purple-700">Продвижение произведений</div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Стратегия внедрения</h3>
+                    <p class="text-gray-700">
+                        Модель монетизации рассчитана на быстрый выход на окупаемость и стабильный рост. 
+                        Основной доход будет генерироваться от Pro-подписок с дополнительными функциями 
+                        для самых активных пользователей.
+                    </p>
+                    </div>
+            </section>
+
+            <!-- 7. Development Timeline -->
+            <section id="development" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    7. Временная шкала разработки
+                </h2>
+
+                <!-- Development Comparison -->
+                <div class="modern-grid-2 mb-8">
+                    <div class="shadcn-card interactive-card">
+                        <div class="shadcn-card-header">
+                            <h3 class="shadcn-card-title flex items-center">
+                                <span class="mr-2">🐌</span>
+                                Традиционная разработка
+                            </h3>
+                        </div>
+                        <div class="shadcn-card-content">
+                            <div class="text-3xl font-bold text-gray-800 mb-2">373–506 часов</div>
+                            <div class="text-gray-600 mb-4">(2.5–3 месяца full-time)</div>
+                            <div class="text-sm text-gray-500">Middle-разработчик, стандартный подход</div>
+                        </div>
+                    </div>
+
+                    <div class="shadcn-card interactive-card">
+                        <div class="shadcn-card-header">
+                            <h3 class="shadcn-card-title flex items-center">
+                                <span class="mr-2">🚀</span>
+                                С ИИ-ассистентом
+                            </h3>
+                        </div>
+                        <div class="shadcn-card-content">
+                            <div class="text-3xl font-bold text-blue-600 mb-2">27–36 часов</div>
+                            <div class="text-blue-700 mb-4">(6–9 рабочих дней)</div>
+                            <div class="text-sm text-blue-600">Разработка с помощью ИИ-инструментов</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acceleration Stats -->
+                <div class="shadcn-card bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+                    <div class="shadcn-card-content text-center">
+                        <div class="text-6xl font-bold text-green-600 mb-4">~14x</div>
+                        <p class="text-green-800 font-semibold text-lg mb-2">ускорение разработки с ИИ</p>
+                        <p class="text-gray-600">Меньше времени, больше результатов</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. Development Timeline -->
+            <section id="timeline" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    8. Детальная дорожная карта
+                </h2>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Этап 1: MVP</h3>
+                                <span class="shadcn-badge shadcn-badge-default">Завершено</span>
+                            </div>
+                            <p class="text-gray-600 mb-3">API, база данных, парсер Ficbook.net, веб-интерфейс</p>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-500">59–80 ч / 12–18 ч (ИИ)</span>
+                                <div class="shadcn-progress w-24 h-2">
+                                    <div class="shadcn-progress-indicator" style="transform: translateX(-0%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Этап 2: Рост в РФ</h3>
+                                <span class="shadcn-badge shadcn-badge-secondary">В работе</span>
+                            </div>
+                            <p class="text-gray-600 mb-3">Author.Today, Litnet, первая версия читалки</p>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-500">58–77 ч / 12–18 ч (ИИ)</span>
+                                <div class="shadcn-progress w-24 h-2">
+                                    <div class="shadcn-progress-indicator" style="transform: translateX(-25%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Этап 3: Функции пользователей</h3>
+                                <span class="shadcn-badge shadcn-badge-outline">Планируется</span>
+                            </div>
+                            <p class="text-gray-600 mb-3">Регистрация, закладки, история, подписки</p>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-500">55–75 ч / 12–15 ч (ИИ)</span>
+                                <div class="shadcn-progress w-24 h-2">
+                                    <div class="shadcn-progress-indicator" style="transform: translateX(-100%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Этап 4: UX & Mobile</h3>
+                                <span class="shadcn-badge shadcn-badge-outline">Планируется</span>
+                            </div>
+                            <p class="text-gray-600 mb-3">Читалка с настройками, PWA-приложение</p>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-500">62–83 ч / 12–18 ч (ИИ)</span>
+                                <div class="shadcn-progress w-24 h-2">
+                                    <div class="shadcn-progress-indicator" style="transform: translateX(-100%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Этап 5: Международный рынок</h3>
+                                <span class="shadcn-badge shadcn-badge-outline">Планируется</span>
+                            </div>
+                            <p class="text-gray-600 mb-3">AO3, Fanfiction.net, локализация EN</p>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-500">72–98 ч / 15–21 ч (ИИ)</span>
+                                <div class="shadcn-progress w-24 h-2">
+                                    <div class="shadcn-progress-indicator" style="transform: translateX(-100%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Этап 6: Монетизация</h3>
+                                <span class="shadcn-badge shadcn-badge-outline">Планируется</span>
+                            </div>
+                            <p class="text-gray-600 mb-3">Pro-аккаунты, рекомендации, реклама</p>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-500">67–93 ч / 15–21 ч (ИИ)</span>
+                                <div class="shadcn-progress w-24 h-2">
+                                    <div class="shadcn-progress-indicator" style="transform: translateX(-100%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+                        <!-- 9. Important Alerts -->
+            <section id="alerts" class="mb-12 fade-in">
+                <h2 class="font-bold text-gray-900 border-b border-gray-200" style="font-size: var(--fs-3xl); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm);">
+                    9. Важные уведомления
+                </h2>
+
+                <div class="space-y-4">
+                    <div class="shadcn-alert shadcn-alert-default">
+                        <svg class="shadcn-alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <div class="font-semibold">🚀 MVP готов к запуску</div>
+                            <div>Базовый функционал полностью реализован и протестирован</div>
+                        </div>
+                    </div>
+
+                    <div class="shadcn-alert shadcn-alert-destructive">
+                        <svg class="shadcn-alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <div>
+                            <div class="font-semibold">⚠️ Требуется инвестирование</div>
+                            <div>Для масштабирования проекта необходимы инвестиции в инфраструктуру</div>
+                        </div>
+                    </div>
+
+                    <div class="shadcn-alert shadcn-alert-default">
+                        <svg class="shadcn-alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <div class="font-semibold">✅ Команда готова</div>
+                            <div>ИИ-ассистент + разработчик готовы к реализации следующих этапов</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 10. Call to Action -->
+            <section class="mb-12 fade-in">
+                <div class="shadcn-card bg-gradient-to-br from-blue-600 to-purple-600 text-white border-0">
+                    <div class="shadcn-card-content text-center py-12">
+                        <h2 class="font-bold text-white mb-6" style="font-size: var(--fs-4xl);">
+                            ✨ Fanfiq = "Spotify для фанфиков"
+                        </h2>
+                        <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                            Мы создаем единую, удобную и функциональную точку входа
+                            для миллионов читателей по всему миру.
+                        </p>
+
+                        <div class="stats-grid mb-8">
+                            <div class="stats-card bg-white/10 border-white/20">
+                                <div class="stats-number text-white">50M+</div>
+                                <div class="stats-label text-blue-100">Потенциальных пользователей</div>
+                            </div>
+                            <div class="stats-card bg-white/10 border-white/20">
+                                <div class="stats-number text-white">6 нед</div>
+                                <div class="stats-label text-blue-100">До полной готовности</div>
+                            </div>
+                            <div class="stats-card bg-white/10 border-white/20">
+                                <div class="stats-number text-white">14x</div>
+                                <div class="stats-label text-blue-100">Ускорение с ИИ</div>
+                            </div>
+                            <div class="stats-card bg-white/10 border-white/20">
+                                <div class="stats-number text-white">$150k+</div>
+                                <div class="stats-label text-blue-100">Месячный доход</div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button class="shadcn-button shadcn-button-primary bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 text-lg font-semibold">
+                                🚀 Инвестировать в проект
+                            </button>
+                            <button class="shadcn-button shadcn-button-outline border-white text-white hover:bg-white/10 px-8 py-3 text-lg">
+                                💼 Скачать презентацию
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+    </main>
+    </div>
+
+    <script>
+        // Theme management
+        function initializeTheme() {
+            const theme = localStorage.getItem('theme') || 'light';
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+
+            function setTheme(newTheme) {
+                body.classList.remove('light', 'dark');
+                body.classList.add(newTheme);
+                localStorage.setItem('theme', newTheme);
+
+                // Update icon
+                const icon = themeToggle.querySelector('svg path');
+                if (newTheme === 'dark') {
+                    icon.setAttribute('d', 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z');
+                } else {
+                    icon.setAttribute('d', 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z');
+                }
+            }
+
+            setTheme(theme);
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = body.classList.contains('dark') ? 'dark' : 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                setTheme(newTheme);
+            });
+        }
+
+        // Navigation highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing mobile menu...');
+
+            // Initialize theme
+            initializeTheme();
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            
+            console.log('Elements found:', {
+                sidebar: !!sidebar,
+                mobileMenuBtn: !!mobileMenuBtn,
+                mobileOverlay: !!mobileOverlay,
+                navLinks: navLinks.length
+            });
+            
+            // Mobile menu functionality
+            function toggleMobileMenu(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Toggle mobile menu clicked');
+                
+                if (!sidebar || !mobileOverlay) {
+                    console.error('Sidebar or overlay not found');
+                    return;
+                }
+                
+                const isActive = sidebar.classList.contains('active');
+                
+                if (isActive) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            }
+            
+            function openMobileMenu() {
+                console.log('Opening mobile menu');
+                sidebar.classList.add('active');
+                mobileOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMobileMenu() {
+                console.log('Closing mobile menu');
+                sidebar.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Add event listeners with error handling
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+                mobileMenuBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    toggleMobileMenu(e);
+                });
+                console.log('Mobile menu button listeners added');
+            } else {
+                console.error('Mobile menu button not found');
+            }
+            
+            if (mobileOverlay) {
+                mobileOverlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeMobileMenu();
+                });
+                console.log('Mobile overlay listener added');
+            }
+            
+            // Close mobile menu when clicking on nav link
+            navLinks.forEach((link, index) => {
+                link.addEventListener('click', function(e) {
+                    console.log(`Nav link ${index} clicked`);
+                    if (window.innerWidth <= 768) {
+                        setTimeout(() => {
+                            closeMobileMenu();
+                        }, 100);
+                    }
+                });
+            });
+            
+            // Close mobile menu on window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    closeMobileMenu();
+                }
+            });
+            
+            function updateActiveLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    if (window.pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', updateActiveLink);
+            updateActiveLink();
+            
+            // Smooth scrolling
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+            
+            console.log('Mobile menu initialization complete');
+        });
+
+        // Chart
+        const ctx = document.getElementById('marketChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Ficbook', 'AO3', 'Wattpad', 'Другие'],
+                datasets: [{
+                    data: [20, 50, 25, 5],
+                    backgroundColor: ['#3b82f6', '#8b5cf6', '#06d6a0', '#64748b'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#374151',
+                            font: { size: 12 },
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Modern Footer -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold">F</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Fanfiq</h3>
+                            <p class="text-gray-400 text-sm">"Spotify для фанфиков"</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">
+                        Единая точка входа для миллионов читателей фанфиков.
+                        Агрегируем контент с самых популярных платформ.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Навигация</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#overview" class="hover:text-white transition-colors">Обзор проекта</a></li>
+                        <li><a href="#market" class="hover:text-white transition-colors">Анализ рынка</a></li>
+                        <li><a href="#roadmap" class="hover:text-white transition-colors">Дорожная карта</a></li>
+                        <li><a href="#timeline" class="hover:text-white transition-colors">Временная шкала</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact & Legal -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Контакты</h4>
+                    <div class="space-y-2 text-gray-300">
+                        <p class="flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            team@fanfiq.com
+                        </p>
+                        <p class="flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Москва, Россия
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Separator -->
+            <div class="shadcn-separator my-8"></div>
+
+            <!-- Bottom Footer -->
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">
+                    © 2024 Fanfiq. Все права защищены.
+                </p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Политика конфиденциальности</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Условия использования</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Лицензия</a>
+                </div>
+            </div>
+
+            <!-- Status Indicator -->
+            <div class="mt-8 pt-8 border-t border-gray-800">
+                <div class="flex items-center justify-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-sm text-gray-400">Система работает</span>
+                    </div>
+                    <div class="shadcn-separator-vertical h-4"></div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-400">Версия</span>
+                        <span class="shadcn-badge shadcn-badge-secondary">1.0.0</span>
+                    </div>
+                    <div class="shadcn-separator-vertical h-4"></div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-400">Последнее обновление</span>
+                        <span class="text-sm text-gray-500">Сегодня</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
