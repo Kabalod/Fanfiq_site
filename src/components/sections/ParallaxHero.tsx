@@ -174,14 +174,18 @@ export function ParallaxHero() {
                 </motion.span>
               </motion.h1>
               
-              <motion.p
+              <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.8, duration: 0.8 }}
-                                  className="text-2xl lg:text-4xl font-medium text-blue-200 mouse-parallax"
-                >
-                  &ldquo;Spotify для фанфиков&rdquo;
-              </motion.p>
+                className="mouse-parallax"
+              >
+                <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3">
+                  <span className="text-2xl lg:text-3xl font-medium text-blue-100">
+                    ✨ &ldquo;Spotify для фанфиков&rdquo;
+                  </span>
+                </div>
+              </motion.div>
             </div>
 
             {/* Description */}

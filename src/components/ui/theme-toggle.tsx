@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -18,31 +18,28 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <Button variant="outline" size="icon" className="w-9 h-9">
-        <div className="w-4 h-4" />
+        <Sun className="h-4 w-4" />
         <span className="sr-only">Переключить тему</span>
       </Button>
     );
   }
 
+  const isDark = resolvedTheme === "dark";
+
+  const handleToggle = () => {
+    console.log("Theme toggle clicked, current theme:", theme, "resolved:", resolvedTheme);
+    setTheme(isDark ? "light" : "dark");
+  };
+
   return (
     <Button
       variant="outline"
       size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="w-9 h-9 relative overflow-hidden"
+      onClick={handleToggle}
+      className="w-9 h-9 relative overflow-hidden hover:bg-accent hover:text-accent-foreground transition-colors"
     >
       <AnimatePresence mode="wait" initial={false}>
-        {theme === "light" ? (
-          <motion.div
-            key="sun"
-            initial={{ y: -20, opacity: 0, rotate: -90 }}
-            animate={{ y: 0, opacity: 1, rotate: 0 }}
-            exit={{ y: 20, opacity: 0, rotate: 90 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Sun className="h-4 w-4" />
-          </motion.div>
-        ) : (
+        {isDark ? (
           <motion.div
             key="moon"
             initial={{ y: -20, opacity: 0, rotate: -90 }}
@@ -52,9 +49,21 @@ export function ThemeToggle() {
           >
             <Moon className="h-4 w-4" />
           </motion.div>
+        ) : (
+          <motion.div
+            key="sun"
+            initial={{ y: -20, opacity: 0, rotate: -90 }}
+            animate={{ y: 0, opacity: 1, rotate: 0 }}
+            exit={{ y: 20, opacity: 0, rotate: 90 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Sun className="h-4 w-4" />
+          </motion.div>
         )}
       </AnimatePresence>
-      <span className="sr-only">Переключить тему</span>
+      <span className="sr-only">
+        Переключить тему (текущая: {isDark ? "темная" : "светлая"})
+      </span>
     </Button>
   );
 }
