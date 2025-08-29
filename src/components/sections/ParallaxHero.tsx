@@ -193,7 +193,7 @@ export function ParallaxHero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 0.8 }}
-              className="text-xl text-blue-100 leading-relaxed max-w-xl mouse-parallax"
+              className="text-xl text-blue-50 md:text-blue-100 leading-relaxed max-w-xl mouse-parallax"
             >
               Единая точка входа для миллионов читателей фанфиков.
               Агрегируем контент с самых популярных платформ в одном удобном приложении.

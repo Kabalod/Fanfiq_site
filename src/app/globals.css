@@ -13,7 +13,7 @@
   --secondary: #7c3aed; /* Rich purple */
   --secondary-foreground: #ffffff;
   --muted: #f8fafc; /* Light background */
-  --muted-foreground: #64748b; /* Medium slate text */
+  --muted-foreground: #475569; /* Stronger slate text for better contrast */
   --accent: #4f46e5; /* Rich indigo accent */
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
