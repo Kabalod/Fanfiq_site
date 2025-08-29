@@ -1,68 +1,41 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { Card, CardContent } from "@/components/ui/card";
-import { AnimatedCounter, ProgressRing } from "@/components/ui/chart";
-import { Users, TrendingUp, Clock, Zap, BookOpen, Star } from "lucide-react";
+import { Users, TrendingUp, Clock, Zap } from "lucide-react";
 
 const statsData = [
   {
     icon: <Users className="w-8 h-8" />,
-    value: 2000000,
-    suffix: "+",
+    value: "2M+",
     label: "Читателей в России",
-    color: "#6366f1",
-    progress: 85,
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
   },
   {
     icon: <Users className="w-8 h-8" />,
-    value: 50000000,
-    suffix: "+",
+    value: "50M+",
     label: "Глобальных пользователей",
-    color: "#8b5cf6",
-    progress: 92,
+    color: "text-purple-600",
+    bgColor: "bg-purple-50",
   },
   {
     icon: <Zap className="w-8 h-8" />,
-    value: 14,
-    suffix: "x",
+    value: "14x",
     label: "Ускорение с ИИ",
-    color: "#f59e0b",
-    progress: 95,
+    color: "text-yellow-600",
+    bgColor: "bg-yellow-50",
   },
   {
     icon: <Clock className="w-8 h-8" />,
-    value: 6,
-    suffix: " нед",
+    value: "6 нед",
     label: "До полной готовности",
-    color: "#06d6a0",
-    progress: 75,
-  },
-  {
-    icon: <BookOpen className="w-8 h-8" />,
-    value: 10000000,
-    suffix: "+",
-    label: "Фанфиков в базе",
-    color: "#ef4444",
-    progress: 88,
-  },
-  {
-    icon: <Star className="w-8 h-8" />,
-    value: 98,
-    suffix: "%",
-    label: "Удовлетворенность",
-    color: "#10b981",
-    progress: 98,
+    color: "text-green-600",
+    bgColor: "bg-green-50",
   },
 ];
 
-export function AnimatedStats() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
+export function MarketStatsSection() {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -79,10 +52,6 @@ export function AnimatedStats() {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
     },
   };
 
@@ -105,71 +74,45 @@ export function AnimatedStats() {
         </motion.div>
 
         <motion.div
-          ref={ref}
           variants={containerVariants}
           initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {statsData.map((stat, index) => (
             <motion.div key={index} variants={itemVariants}>
               <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105">
-                {/* Background gradient */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                  style={{
-                    background: `linear-gradient(135deg, ${stat.color}22, ${stat.color}44)`,
-                  }}
-                />
-                
                 <CardContent className="p-8 text-center relative">
                   {/* Icon */}
                   <motion.div
-                    className="mb-6 mx-auto w-16 h-16 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: `${stat.color}20`, color: stat.color }}
+                    className={`mb-6 mx-auto w-16 h-16 rounded-full flex items-center justify-center ${stat.bgColor} ${stat.color}`}
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     {stat.icon}
                   </motion.div>
 
-                  {/* Progress Ring */}
-                  <div className="relative mb-6">
-                    <ProgressRing
-                      progress={stat.progress}
-                      size={100}
-                      color={stat.color}
-                      className="relative"
-                    />
-                  </div>
-
-                  {/* Animated Counter */}
-                  <div className="mb-2">
-                    <AnimatedCounter
-                      from={0}
-                      to={stat.value}
-                      duration={2}
-                      suffix={stat.suffix}
-                      className="text-3xl font-bold"
-                      style={{ color: stat.color }}
-                    />
+                  {/* Value */}
+                  <div className={`text-4xl font-bold mb-2 ${stat.color}`}>
+                    {stat.value}
                   </div>
 
                   {/* Label */}
-                  <p className="text-gray-600 font-medium">{stat.label}</p>
+                  <p className="text-gray-600 font-medium text-center">
+                    {stat.label}
+                  </p>
 
                   {/* Decorative elements */}
-                  <div className="absolute top-4 right-4 w-2 h-2 rounded-full opacity-20" 
-                       style={{ backgroundColor: stat.color }} />
-                  <div className="absolute bottom-4 left-4 w-1 h-1 rounded-full opacity-30" 
-                       style={{ backgroundColor: stat.color }} />
+                  <div className={`absolute top-4 right-4 w-2 h-2 rounded-full opacity-20 ${stat.bgColor.replace('bg-', 'bg-')}`} />
+                  <div className={`absolute bottom-4 left-4 w-1 h-1 rounded-full opacity-30 ${stat.bgColor.replace('bg-', 'bg-')}`} />
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Additional animated elements */}
+        {/* Additional info */}
         <motion.div
           initial={{ opacity: 0, scale: 0 }}
           whileInView={{ opacity: 1, scale: 1 }}
