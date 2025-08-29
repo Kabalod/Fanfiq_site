@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Users, Zap, Clock } from "lucide-react";
@@ -13,10 +13,21 @@ export function ParallaxHero() {
     offset: ["start start", "end start"]
   });
 
-  // Parallax transforms
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const cardsY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = typeof window !== "undefined" ? window.matchMedia("(max-width: 768px)") : null;
+    const update = () => setIsMobile(!!mq?.matches);
+    update();
+    mq?.addEventListener?.("change", update);
+    return () => mq?.removeEventListener?.("change", update);
+  }, []);
+  const motionEnabled = !shouldReduceMotion && !isMobile;
+
+  // Parallax transforms (disabled on mobile/reduced motion)
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", motionEnabled ? "50%" : "0%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", motionEnabled ? "30%" : "0%"]);
+  const cardsY = useTransform(scrollYProgress, [0, 1], ["0%", motionEnabled ? "20%" : "0%"]);
 
   // Smooth spring animations
   const smoothBackgroundY = useSpring(backgroundY, { stiffness: 100, damping: 30 });
@@ -24,25 +35,27 @@ export function ParallaxHero() {
   const smoothCardsY = useSpring(cardsY, { stiffness: 100, damping: 30 });
 
   // Mouse parallax effect
+  let rafId: number | null = null;
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    
+    if (!motionEnabled || !containerRef.current) return;
+    if (rafId) cancelAnimationFrame(rafId);
     const { clientX, clientY } = e;
-    const { innerWidth, innerHeight } = window;
-    
-    const xPos = (clientX / innerWidth - 0.5) * 20;
-    const yPos = (clientY / innerHeight - 0.5) * 20;
-    
-    const elements = containerRef.current.querySelectorAll('.mouse-parallax');
-    elements.forEach((el, index) => {
-      const speed = (index + 1) * 0.1;
-      (el as HTMLElement).style.transform = `translate(${xPos * speed}px, ${yPos * speed}px)`;
+    rafId = requestAnimationFrame(() => {
+      const { innerWidth, innerHeight } = window;
+      const xPos = (clientX / innerWidth - 0.5) * 16; // немного меньше амплитуды
+      const yPos = (clientY / innerHeight - 0.5) * 16;
+      const elements = containerRef.current!.querySelectorAll('.mouse-parallax');
+      elements.forEach((el, index) => {
+        const speed = (index + 1) * 0.08;
+        (el as HTMLElement).style.transform = `translate3d(${xPos * speed}px, ${yPos * speed}px, 0)`;
+      });
     });
   };
 
   // Floating particles
   const FloatingParticles = () => {
-    const particles = Array.from({ length: 20 }, (_, i) => ({
+    if (!motionEnabled) return null;
+    const particles = Array.from({ length: 10 }, (_, i) => ({
       id: i,
       size: Math.random() * 4 + 2,
       initialX: Math.random() * 100,
@@ -52,11 +65,11 @@ export function ParallaxHero() {
     }));
 
     return (
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="hidden md:block absolute inset-0 overflow-hidden">
         {particles.map((particle) => (
           <motion.div
             key={particle.id}
-            className="absolute bg-white/10 rounded-full"
+            className="absolute bg-white/10 rounded-full will-change-transform"
             style={{
               width: particle.size,
               height: particle.size,
@@ -83,12 +96,12 @@ export function ParallaxHero() {
   return (
     <section 
       ref={containerRef}
-      className="relative min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 text-white overflow-hidden"
-      onMouseMove={handleMouseMove}
+      className="relative min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 text-white overflow-hidden [transform:translateZ(0)]"
+      onMouseMove={motionEnabled ? handleMouseMove : undefined}
     >
       {/* Animated Background */}
       <motion.div
-        style={{ y: smoothBackgroundY }}
+        style={{ y: motionEnabled ? smoothBackgroundY : undefined }}
         className="absolute inset-0"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/80 via-purple-600/80 to-indigo-800/80" />
@@ -96,29 +109,29 @@ export function ParallaxHero() {
         
         {/* Large background shapes */}
         <motion.div
-          animate={{
+          animate={motionEnabled ? {
             scale: [1, 1.1, 1],
             rotate: [0, 5, -5, 0],
-          }}
-          transition={{
+          } : undefined}
+          transition={motionEnabled ? {
             duration: 20,
             repeat: Infinity,
             ease: "easeInOut",
-          }}
-          className="absolute top-10 left-10 w-96 h-96 bg-white/5 rounded-full blur-3xl"
+          } : undefined}
+          className="hidden md:block absolute top-10 left-10 w-96 h-96 bg-white/5 rounded-full blur-3xl"
         />
         
         <motion.div
-          animate={{
+          animate={motionEnabled ? {
             scale: [1, 0.9, 1.2, 1],
             rotate: [0, -10, 10, 0],
-          }}
-          transition={{
+          } : undefined}
+          transition={motionEnabled ? {
             duration: 25,
             repeat: Infinity,
             ease: "easeInOut",
-          }}
-          className="absolute bottom-20 right-20 w-80 h-80 bg-purple-300/10 rounded-full blur-3xl"
+          } : undefined}
+          className="hidden md:block absolute bottom-20 right-20 w-80 h-80 bg-purple-300/10 rounded-full blur-3xl"
         />
       </motion.div>
 
@@ -129,7 +142,7 @@ export function ParallaxHero() {
           {/* Left Content with Text Parallax */}
           <motion.div
             style={{ y: smoothTextY }}
-            className="space-y-8"
+            className="space-y-8 will-change-transform transform-gpu"
           >
             {/* Badges */}
             <motion.div
@@ -155,25 +168,12 @@ export function ParallaxHero() {
               <motion.h1
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.4 }}
-                className="text-5xl lg:text-7xl font-bold leading-tight mouse-parallax"
+                transition={{ duration: 0.8 }}
+                className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight text-white drop-shadow-lg"
               >
-                <motion.span
-                  className="block bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent"
-                  animate={{ 
-                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
-                  }}
-                  transition={{ 
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  style={{ backgroundSize: "200% 200%" }}
-                >
-                  Fanfiq
-                </motion.span>
+                Fanfiq
               </motion.h1>
-              
+
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -207,8 +207,8 @@ export function ParallaxHero() {
               className="flex flex-col sm:flex-row gap-4"
             >
               <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={motionEnabled ? { scale: 1.05, y: -2 } : undefined}
+                whileTap={motionEnabled ? { scale: 0.95 } : undefined}
                 className="mouse-parallax"
               >
                 <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-2xl">
@@ -217,8 +217,8 @@ export function ParallaxHero() {
               </motion.div>
               
               <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={motionEnabled ? { scale: 1.05, y: -2 } : undefined}
+                whileTap={motionEnabled ? { scale: 0.95 } : undefined}
                 className="mouse-parallax"
               >
                 <Button size="lg" variant="outline" className="px-8 py-4 text-lg bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20">
@@ -241,7 +241,7 @@ export function ParallaxHero() {
             >
               {/* Animated Stats Cards */}
               <motion.div
-                className="col-span-2 mouse-parallax"
+                className="col-span-2 mouse-parallax will-change-transform transform-gpu"
                 whileHover={{ 
                   scale: 1.02,
                   rotateY: 5,
@@ -264,7 +264,7 @@ export function ParallaxHero() {
               </motion.div>
 
               <motion.div
-                className="mouse-parallax"
+                className="mouse-parallax will-change-transform transform-gpu"
                 whileHover={{ 
                   scale: 1.05,
                   rotateY: -10,
@@ -280,7 +280,7 @@ export function ParallaxHero() {
               </motion.div>
 
               <motion.div
-                className="mouse-parallax"
+                className="mouse-parallax will-change-transform transform-gpu"
                 whileHover={{ 
                   scale: 1.05,
                   rotateY: 10,
@@ -303,21 +303,9 @@ export function ParallaxHero() {
                 transition={{ delay: 1.8, duration: 1 }}
               >
                 <motion.div
-                  animate={{ 
-                    rotate: [0, 5, -5, 0],
-                    scale: [1, 1.1, 1],
-                    y: [0, -10, 0]
-                  }}
-                  transition={{ 
-                    duration: 6,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  whileHover={{
-                    scale: 1.2,
-                    rotate: 15,
-                    transition: { duration: 0.3 }
-                  }}
+                  animate={motionEnabled ? { rotate: [0, 5, -5, 0], scale: [1, 1.1, 1], y: [0, -10, 0] } : undefined}
+                  transition={motionEnabled ? { duration: 6, repeat: Infinity, ease: "easeInOut" } : undefined}
+                  whileHover={motionEnabled ? { scale: 1.2, rotate: 15, transition: { duration: 0.3 } } : undefined}
                   className="w-32 h-32 bg-gradient-to-r from-white/20 to-blue-200/20 backdrop-blur-lg border border-white/30 rounded-full flex items-center justify-center shadow-2xl cursor-pointer"
                 >
                   <BookOpen className="w-16 h-16 text-white" />
@@ -355,35 +343,35 @@ export function ParallaxHero() {
       {/* Background Gradient Animation */}
       <motion.div
         className="absolute inset-0"
-        style={{ y: smoothBackgroundY }}
+        style={{ y: motionEnabled ? smoothBackgroundY : undefined }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/50 via-purple-600/50 to-indigo-800/50" />
         
         {/* Animated background elements */}
         <motion.div
-          animate={{
+          animate={motionEnabled ? {
             scale: [1, 1.2, 1],
             opacity: [0.1, 0.2, 0.1],
-          }}
-          transition={{
+          } : undefined}
+          transition={motionEnabled ? {
             duration: 8,
             repeat: Infinity,
             ease: "easeInOut",
-          }}
-          className="absolute top-20 left-1/4 w-72 h-72 bg-white rounded-full blur-3xl"
+          } : undefined}
+          className="hidden md:block absolute top-20 left-1/4 w-72 h-72 bg-white rounded-full blur-3xl"
         />
         
         <motion.div
-          animate={{
+          animate={motionEnabled ? {
             scale: [1, 0.8, 1.3, 1],
             opacity: [0.05, 0.15, 0.05],
-          }}
-          transition={{
+          } : undefined}
+          transition={motionEnabled ? {
             duration: 12,
             repeat: Infinity,
             ease: "easeInOut",
-          }}
-          className="absolute bottom-32 right-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl"
+          } : undefined}
+          className="hidden md:block absolute bottom-32 right-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl"
         />
       </motion.div>
     </section>
