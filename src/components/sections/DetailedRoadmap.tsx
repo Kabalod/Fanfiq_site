@@ -161,8 +161,9 @@ const detailedRoadmap = [
 
 export function DetailedRoadmap() {
   const totalTraditional = 373; // 59+58+55+62+72+67
-  const totalAI = 27; // 12+12+12+12+15+15 (минимальные значения)
-  const totalAIMax = 36; // 18+18+15+18+21+21 (максимальные значения)
+  // Обновлено по уточнению: суммарно с ИИ ≈ 110–112 часов (~14 рабочих дней)
+  const totalAI = 110;
+  const totalAIMax = 112;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -248,7 +249,7 @@ export function DetailedRoadmap() {
                     {totalAI}–{totalAIMax} ч
                   </div>
                   <div className="text-fluid-base text-green-700 dark:text-green-300 font-semibold mb-2">
-                    (6–9 рабочих дней)
+                    (≈ 14 рабочих дней)
                   </div>
                   <div className="text-fluid-sm text-green-600 dark:text-green-400">
                     С ИИ-ассистентом
@@ -468,7 +469,7 @@ export function DetailedRoadmap() {
                     {totalAI}–{totalAIMax} ч
                   </div>
                   <div className="text-blue-100 text-fluid-lg font-medium">
-                    С ИИ (6–9 дней)
+                    С ИИ (≈ 14 рабочих дней)
                   </div>
                 </div>
                 <div>
