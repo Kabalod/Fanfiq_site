@@ -178,8 +178,6 @@
     }
   }
 
-  /* Grid improvements - using Tailwind classes instead of custom CSS */
-
   /* Text size constraints */
   .text-balance {
     text-wrap: balance;
