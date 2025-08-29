@@ -6,10 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, BookOpen, Search, Users, Star, Menu, X, Zap, Shield, Target, TrendingUp, Clock, Globe, DollarSign } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ParallaxHero } from "@/components/sections/ParallaxHero";
 import { AnimatedStats } from "@/components/sections/AnimatedStats";
 import { InteractiveCharts } from "@/components/sections/InteractiveCharts";
 import { EnhancedRoadmap } from "@/components/sections/EnhancedRoadmap";
+import { OptimizedFeatures } from "@/components/sections/OptimizedFeatures";
 
 export default function LandingPage() {
   return (
@@ -20,8 +22,8 @@ export default function LandingPage() {
       {/* Hero Section with Advanced Parallax */}
       <ParallaxHero />
 
-      {/* Features Section */}
-      <FeaturesSection />
+      {/* Optimized Features Section */}
+      <OptimizedFeatures />
 
       {/* Animated Stats */}
       <AnimatedStats />
@@ -86,6 +88,7 @@ function Header() {
           </nav>
 
           <div className="hidden md:flex items-center space-x-4">
+            <ThemeToggle />
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
               Войти
             </Button>
@@ -133,6 +136,10 @@ function Header() {
                 Тарифы
               </a>
               <div className="flex flex-col space-y-2 pt-4">
+                <div className="flex justify-between items-center mb-2">
+                  <ThemeToggle />
+                  <span className="text-sm text-muted-foreground">Тема</span>
+                </div>
                 <Button variant="ghost" className="justify-start">
                   Войти
                 </Button>
@@ -316,7 +323,7 @@ function PricingSection() {
           <p className="text-xl text-muted-foreground">Выберите план, подходящий именно вам</p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -324,9 +331,10 @@ function PricingSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2, duration: 0.6 }}
+              className="flex"
             >
-              <Card className={`border-border relative h-full ${
-                plan.popular ? "ring-2 ring-accent shadow-2xl scale-105" : ""
+              <Card className={`border-border relative w-full flex flex-col ${
+                plan.popular ? "ring-2 ring-accent shadow-2xl md:scale-105" : ""
               } hover:shadow-2xl transition-all duration-500`}>
                 {plan.popular && (
                   <motion.div
@@ -340,17 +348,25 @@ function PricingSection() {
                   </motion.div>
                 )}
                 
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-2xl text-card-foreground">{plan.name}</CardTitle>
+                <CardHeader className="text-center pb-4 flex-shrink-0">
+                  <CardTitle className="text-2xl text-card-foreground text-balance">
+                    {plan.name}
+                  </CardTitle>
                   <div className="mt-4">
-                    <span className="text-5xl font-bold text-card-foreground">{plan.price}</span>
-                    <span className="text-muted-foreground">{plan.period}</span>
+                    <span className="text-4xl lg:text-5xl font-bold text-card-foreground">
+                      {plan.price}
+                    </span>
+                    <span className="text-muted-foreground text-base">
+                      {plan.period}
+                    </span>
                   </div>
-                  <CardDescription className="mt-3 text-base">{plan.description}</CardDescription>
+                  <p className="mt-3 text-base text-muted-foreground text-pretty">
+                    {plan.description}
+                  </p>
                 </CardHeader>
                 
-                <CardContent className="flex-1">
-                  <ul className="space-y-3 mb-8">
+                <CardContent className="flex-1 flex flex-col">
+                  <ul className="space-y-3 mb-8 flex-1">
                     {plan.features.map((feature, featureIndex) => (
                       <motion.li
                         key={featureIndex}
@@ -358,10 +374,12 @@ function PricingSection() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: featureIndex * 0.1, duration: 0.4 }}
-                        className="flex items-center"
+                        className="flex items-start"
                       >
-                        <CheckCircle className="w-5 h-5 text-accent mr-3 flex-shrink-0" />
-                        <span className="text-card-foreground">{feature}</span>
+                        <CheckCircle className="w-5 h-5 text-accent mr-3 flex-shrink-0 mt-0.5" />
+                        <span className="text-card-foreground text-pretty leading-relaxed">
+                          {feature}
+                        </span>
                       </motion.li>
                     ))}
                   </ul>
@@ -369,6 +387,7 @@ function PricingSection() {
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
+                    className="flex-shrink-0"
                   >
                     <Button
                       className={`w-full ${
