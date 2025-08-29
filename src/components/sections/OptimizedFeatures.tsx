@@ -74,10 +74,10 @@ export function OptimizedFeatures() {
             transition={{ duration: 0.6 }}
             className="text-center mb-20"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
+            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-6">
               Всё необходимое для комфортного чтения
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
               Мощные инструменты для поиска, чтения и взаимодействия с фанфик-сообществом
             </p>
           </motion.div>
@@ -103,12 +103,12 @@ export function OptimizedFeatures() {
                           className: "w-8 h-8 text-primary" 
                         })}
                       </motion.div>
-                      <CardTitle className="text-xl text-card-foreground mb-3 group-hover:text-primary transition-colors">
+                      <CardTitle className="text-xl text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors">
                         {feature.title}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-0">
-                      <p className="text-base text-muted-foreground leading-relaxed">
+                      <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">
                         {feature.description}
                       </p>
                     </CardContent>

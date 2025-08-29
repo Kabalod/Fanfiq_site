@@ -15,6 +15,7 @@ export function ParallaxHero() {
 
   const shouldReduceMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const mq = typeof window !== "undefined" ? window.matchMedia("(max-width: 768px)") : null;
     const update = () => setIsMobile(!!mq?.matches);
@@ -22,7 +23,10 @@ export function ParallaxHero() {
     mq?.addEventListener?.("change", update);
     return () => mq?.removeEventListener?.("change", update);
   }, []);
-  const motionEnabled = !shouldReduceMotion && !isMobile;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  const motionEnabled = mounted && !shouldReduceMotion && !isMobile;
 
   // Parallax transforms (disabled on mobile/reduced motion)
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", motionEnabled ? "50%" : "0%"]);
@@ -65,7 +69,7 @@ export function ParallaxHero() {
     }));
 
     return (
-      <div className="hidden md:block absolute inset-0 overflow-hidden">
+      <div className="hidden md:block absolute inset-0 overflow-hidden" suppressHydrationWarning>
         {particles.map((particle) => (
           <motion.div
             key={particle.id}

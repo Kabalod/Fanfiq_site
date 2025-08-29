@@ -70,10 +70,10 @@ export function MarketStatsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <h2 className="text-fluid-4xl font-bold text-foreground mb-6">
+          <h2 className="text-fluid-4xl font-bold text-slate-900 dark:text-slate-100 drop-shadow-sm mb-6">
             Впечатляющие результаты
           </h2>
-          <p className="text-fluid-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-fluid-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
             Цифры, которые говорят о нашем успехе и потенциале роста
           </p>
         </motion.div>
