@@ -10,11 +10,11 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ParallaxHero } from "@/components/sections/ParallaxHero";
 import { OptimizedFeatures } from "@/components/sections/OptimizedFeatures";
 import { MarketStatsSection } from "@/components/sections/MarketStatsSection";
-import { SimpleRoadmapSection } from "@/components/sections/SimpleRoadmapSection";
+import { DetailedRoadmap } from "@/components/sections/DetailedRoadmap";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       {/* Header */}
       <Header />
 
@@ -27,8 +27,8 @@ export default function LandingPage() {
       {/* Market Stats Section */}
       <MarketStatsSection />
 
-      {/* Roadmap Section */}
-      <SimpleRoadmapSection />
+      {/* Detailed Roadmap with Time Comparison */}
+      <DetailedRoadmap />
 
       {/* Pricing Section */}
       <PricingSection />
